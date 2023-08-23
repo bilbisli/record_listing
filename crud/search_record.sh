@@ -15,9 +15,7 @@ function search_record()
 	local search_phrase="${@}"
 	local record_names=""
 	
-	
 	result="`grep "${search_phrase[@]}" "${RECORD_FILE}" | sort -k 1`"
-	record_names="`echo "${result}" | cut -d "," -f 1 `"
 	
 	if [[ "${#result}" -eq 0 ]]; then
 		echo "Search failed - no such record" >> /dev/stderr
@@ -97,9 +95,6 @@ function search_record_get_single()
 	
 	return $ret_status
 }
-
-# cmd
-# grep "batman" "../db/listing.csv" | sort -k 1 | cut -d "," -f 1 | awk -F "\n" -v keyword="batman 4" '$1 == keyword {$1=$1; print}' | wc -l
 
 
 function main()
