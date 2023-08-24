@@ -1,13 +1,21 @@
 #! /bin/bash
 source ./search_record.sh
 
+# get_record_file()
+# This function returns the database file relative path
+# value output: value output (return) is done by the echo method
+# usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
 	echo "../db/listing.csv"
 	return 0
 }
 
-
+# insert_record(record_amonut,record_name...)
+# This function uses search function to find and make a list of options if the search cant find the record it make a new listing in the database
+# value output: value output (return) is done by the echo method
+# @return ret_status: 0 for succesful inserting or updating the record listing , 1 otherwise
+# @param --add: will give an option to create a new listing
 function insert_record()
 {
 	
@@ -21,30 +29,25 @@ function insert_record()
 	
 	search_record_get_single "search_function_result" "--add" "$record_name"
 	search_status="$?"
-	echo "$search_status"
 	
+	if [[ $search_status -eq 2 ]];then
+		echo "$record_name,$record_amount" >> $RECORD_FILE
+		echo "Added the record '$search_function_result' successfully"
+	fi
 	
-	var1=$(echo $search_function_result)
-	echo "$var1"
+	##update_name_function
+	
+	##update_amount_function
 
     	if [[ "$search_status" -eq 0 ]]; then
         	echo $result_search_fun
 
     	fi
-	
-	
-	
-	
-	
+		
 	return $ret_status
 	
 	
-	
 
-	## if we want to insert new record
-#	echo "new_record,record_amount" >> $RECORD_FILE
-	## if we want to change the name record	
-#	echo $(cat "$RECORD_FILE")
 }
 
 
