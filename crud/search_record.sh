@@ -1,12 +1,20 @@
 #! /bin/bash
 
 
+# get_record_file()
+# This function returns the database file relative path
+# value output: value output (return) is done by the echo method
+# usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
 	echo "../db/listing.csv"
 	return 0
 }
 
+# search_record(search_phrase...)
+# This function searches a given phrase (might be multiple words in one phrase) in the database and returns the result
+# value output: value output (return) is done by the echo method
+# @return ret_status: 0 for succesful search result and record retrieval, 1 otherwise
 function search_record()
 {
 	local RECORD_FILE=$(get_record_file)
@@ -18,7 +26,7 @@ function search_record()
 	result="`grep "${search_phrase[@]}" "${RECORD_FILE}" | sort -k 1`"
 	
 	if [[ "${#result}" -eq 0 ]]; then
-		echo "Search failed - no such record" >> /dev/stderr
+		echo "No such record" >> /dev/stderr
 		ret_status=1
 	else
 		echo "${result}"
@@ -30,10 +38,11 @@ function search_record()
 }
 
 # search_record_get_single(search_record_get_single_result,optional:--add,search_phrase...)
-# A function that searches a given record and lets the user choose one if multiple records are found
+# This function searches a given record and lets the user choose one if multiple records are found
 # @param search_record_get_single_result: the variable name (reference) to store the result in
-# @param --add: indicated whether the search term itself should be an option for the user to choose from
+# @param --add: indicated whether the search term itself should be an option for the user to choose from if more than one record is found
 # @param search_phrase: the rest of the parameters will be assigned to the search phrase
+# @return ret_status: returns the status of the ofunction peration - 2 if record not in database and is returned, 0 for successful record return, 1 otherwise
 # usage: search_record_get_single calling_func_result_var --add ${search_phrase}
 # NOTE: the parameter 'calling_func_result_var' should be the name of a valid declared variable to store the result in
 # IMPORTANT: make sure to no call the 'calling_func_result_var' the same as 'search_record_get_single_result' - it willresult in a circular name reference
@@ -46,6 +55,7 @@ function search_record_get_single()
 	local ret_status=0
 	local add_option=false
 	local is_phrase_exist=true
+	local added_search_phrase_flag=false
 	local record_names=""
 	local search_phrase_copy=""
 	local -n search_record_get_single_result="$1"
@@ -73,22 +83,25 @@ function search_record_get_single()
 			# for the case that the phrase itself needs to be added - checks for the add parameter and that the record does not exist already
 			if [[ "${add_option}" == true ]] && [[ "`echo "${record_names}" | grep -o "^${search_phrase_copy}$" | wc -l`" -eq 0 ]]; then	
 				options+=("${search_phrase_copy}")		# must check for this string if this option is chosen!
+				added_search_phrase_flag=true
 			fi
 			echo "Choose the desired record:"
 			select record in "${options[@]}"; do
 				if [[ -n "$record" ]]; then
 					search_record_get_single_result="${record}"
+					if [[ "${added_search_phrase_flag}" == true && "${options[-1]}" == "${record}" ]]; then
+						ret_status=2
+					fi
 					break
 				else
 					echo "Invalid option" >> /dev/stderr
 				fi
 			done
+			
 		fi
-	else
-		if [[ "${add_option}" == true ]]; then
-			search_record_get_single_result="${search_phrase[@]}"
-			ret_status=0
-		fi
+	elif [[ "${add_option}" == true ]]; then
+		search_record_get_single_result="${search_phrase[@]}"
+		ret_status=2
 	fi
 	
 	# TODO: Add logging
