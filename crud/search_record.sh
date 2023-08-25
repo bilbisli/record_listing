@@ -3,6 +3,10 @@
 source ../logging/insert_log.sh
 
 
+# get_log_file()
+# This function returns the log file relative path
+# value output: value output (return) is done by the echo method
+# usage: local log_file_path=$(get_log_file)
 function get_log_file()
 {
 	echo "../logging/listing_log"
