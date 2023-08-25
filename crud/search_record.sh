@@ -1,5 +1,13 @@
 #! /bin/bash
 
+source ../logging/insert_log.sh
+
+
+function get_log_file()
+{
+	echo "../logging/listing_log"
+	return 0
+}
 
 # get_record_file()
 # This function returns the database file relative path
@@ -18,10 +26,11 @@ function get_record_file()
 function search_record()
 {
 	local RECORD_FILE=$(get_record_file)
+	local LOG_EVENT="Search"
+	local log_status="Success"
 	local result=0
 	local ret_status=0
 	local search_phrase="${@}"
-	local record_names=""
 	
 	result="`grep "${search_phrase[@]}" "${RECORD_FILE}" | sort -k 1`"
 	
@@ -32,7 +41,10 @@ function search_record()
 		echo "${result}"
 	fi
 	
-	# TODO: Add logging
+	if [[ "${ret_status}" -ne 0 ]]; then
+		log_status="Failure"
+	fi
+	insert_log ${LOG_EVENT} ${log_status}
 	
 	return $ret_status
 }
@@ -126,8 +138,9 @@ function main()
 	
 	### workaround to handle the pitfall of local declaration changing the return status ($?) - 'search_record_func_result' must be globaly unique
 	search_record_func_result=$(search_record "${search_phrase}")
-	ret_status=$?
+	ret_status="$?"
 	###
+
 	if [[ "$ret_status" -eq 0 ]]; then
 		echo "search_record results:"
 		echo "$search_record_func_result"
