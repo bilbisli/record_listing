@@ -1,5 +1,5 @@
 #! /bin/bash
-
+source $(dirname "${BASH_SOURCE[0]}")/../logging/insert_log.sh
 source $(dirname "${BASH_SOURCE[0]}")/search_record.sh
 source $(dirname "${BASH_SOURCE[0]}")/update_count.sh
 
@@ -10,7 +10,7 @@ source $(dirname "${BASH_SOURCE[0]}")/update_count.sh
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
 	return 0
 }
 
@@ -22,26 +22,28 @@ function get_record_file()
 function insert_record()
 {
 
-
+	local arg_count=$#
 	local record_amount=$1
 	shift
 	local record_name="$@"
 	local ret_status=0
 	local RECORD_FILE=$(get_record_file)
 	local search_function_result=0
+	local LOG_EVENT="Insert"
+	local log_status="Success"
 	
 	
-	if [[ "$#" -ne 2 ]]; then
+	if [[ $arg_count -ne 2 ]]; then
 		
-		read -p "Inset record name: " record_name
-		while [[ "$record_amount" == "" ]]; do
-    			
-    			read -p "Insert record amount: " record_amount
-    			if [[ "$record_amount" == "" ]]; then
-    				echo invalid amount >> /dev/stderr
+		read -p "insert record name: " record_name
+		while [[ "$record_amount" -lt 1 ]]; do
+			# check if the new name is substantial			
+    			read -p "insert number of copies: " record_amount
+   			if [[ "$record_amount" -lt 1 ]]; then
+   				echo "Error, the count should be a positive integer" >> /dev/stderr
     			fi 
        		done
-	fi	
+	fi   	
 	
 	search_record_get_single "search_function_result" "--add" "$record_name"
 	search_status="$?"
@@ -58,20 +60,18 @@ function insert_record()
     			local number=$(echo "$line_after_grep" | cut -d',' -f2)
 			sum_of_record=$(( number+record_amount ))
 #			echo $sum_of_record
-			update_record_count "$string_of_option" "$sum_of_record"
-		
+			update_record_count "$sum_of_record" "$string_of_option" 
+			ret_status=$?			
 		else
-    			echo "No matching line found."
+    			echo "No matching line found." >> /dev/stderr
+    			ret_status=1
 		fi
 	fi
+	if [[ ret_status -ne 0 ]];then
+		log_status="Failure"
+	fi 	
 	
-	
-
-    	if [[ "$search_status" -eq 0 ]]; then
-        	echo $result_search_fun
-
-    	fi
-		
+	insert_log ${LOG_EVENT} ${log_status}		
 	return $ret_status
 	
 	
