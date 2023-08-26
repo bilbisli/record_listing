@@ -1,5 +1,6 @@
 #! /bin/bash
 source ./search_record.sh
+source ./update_count.sh
 
 # get_record_file()
 # This function returns the database file relative path
@@ -33,11 +34,23 @@ function insert_record()
 	if [[ $search_status -eq 2 ]];then
 		echo "$record_name,$record_amount" >> $RECORD_FILE
 		echo "Added the record '$search_function_result' successfully"
+	else [[ search_status -eq 0 ]]
+		local string_of_option=$(echo $search_function_result)
+		#updating record amount 
+		local line_after_grep=$(grep "^${string_of_option}," $RECORD_FILE )
+		if [[ -n "$line_after_grep" ]]; then
+    			# Extract the number of record using cat after grep and puting it to a veriable
+    			local number=$(echo "$line_after_grep" | cut -d',' -f2)
+			sum_of_record=$(( number+record_amount ))
+#			echo $sum_of_record
+			update_record_count "$string_of_option" "$sum_of_record"
+		
+		else
+    			echo "No matching line found."
+		fi
 	fi
 	
-	##update_name_function
 	
-	##update_amount_function
 
     	if [[ "$search_status" -eq 0 ]]; then
         	echo $result_search_fun

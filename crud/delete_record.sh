@@ -1,5 +1,6 @@
 #! /bin/bash
 source ./search_record.sh
+source ./update_count.sh
 
 # get_record_file()
 # This function returns the database file relative path
@@ -30,23 +31,28 @@ function delete_record()
 	search_record_get_single "search_function_result" "$record_name"
 	search_status="$?"
 	
-	if [[ $search_status -eq 2 ]];then
-		echo ""
+
+	if [[ search_status -eq 0 ]];then
+		local string_of_option=$(echo $search_function_result)
+		#updating record amount 
+		local line_after_grep=$(grep "^${string_of_option}," $RECORD_FILE )
+		if [[ -n "$line_after_grep" ]]; then
+    			# Extract the number of record using cat after grep and puting it to a veriable
+    			local number=$(echo "$line_after_grep" | cut -d',' -f2)
+			local sum_of_record=$(( number-record_amount ))
+			if [[ $sum_of_record -eq 0 ]];then
+				sed -i "/$line_after_grep/d" $RECORD_FILE
+				echo "The $record_name was deleted from the database"
+			else			
+				update_record_count "$string_of_option" "$sum_of_record"
+			fi
+		else
+    			echo "couldn't delete the record"
+		fi
 	fi
-	
-	##update_name_function
-	
-	##update_amount_function
 
-    	if [[ "$search_status" -eq 0 ]]; then
-        	echo $result_search_fun
 
-    	fi
-	
-	
-	
-	
-	
+
 	return $ret_status
 	
 }
