@@ -29,6 +29,18 @@ function delete_record()
 	local RECORD_FILE=$(get_record_file)
 	local search_function_result=0
 	
+	if [[ "$#" -ne 2 ]]; then
+		
+		read -p "Inset record name: " record_name
+		while [[ "$record_amount" == "" ]]; do
+    			
+    			read -p "Insert record amount: " record_amount
+    			
+    			if [[ "$record_amount" == "" ]]; then
+    				echo invalid amount >> /dev/stderr
+    			fi 
+       		done
+	fi	
 	
 	search_record_get_single "search_function_result" "$record_name"
 	search_status="$?"
