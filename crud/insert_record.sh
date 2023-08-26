@@ -22,8 +22,7 @@ function get_record_file()
 function insert_record()
 {
 
-	local old_name=0
-	local new_name=""
+
 	local record_amount=$1
 	shift
 	local record_name="$@"
