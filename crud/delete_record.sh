@@ -62,16 +62,17 @@ function delete_record()
 				echo "The $record_name was deleted from the database"
 			else			
 				update_record_count "$sum_of_record" "$string_of_option"
-				if [[ $? -ne 0 ]];then
-					log_status="Failure"
-				fi 
+				ret_status=$?
+
 			fi
 		else
     			echo "couldn't delete the record" >> /dev/stderr
-    			log_status="Failure"
+    			ret_status=1
 		fi
 	fi
-
+	if [[ ret_status -ne 0 ]];then
+		log_status="Failure"
+	fi 
 
 	insert_log ${LOG_EVENT} ${log_status}
 	return $ret_status

@@ -61,21 +61,16 @@ function insert_record()
 			sum_of_record=$(( number+record_amount ))
 #			echo $sum_of_record
 			update_record_count "$sum_of_record" "$string_of_option" 
-			if [[ $? -ne 0 ]];then
-				log_status="Failure"
-			fi 			
+			ret_status=$?			
 		else
     			echo "No matching line found." >> /dev/stderr
-    			log_status="Failure"
+    			ret_status=1
 		fi
 	fi
+	if [[ ret_status -ne 0 ]];then
+		log_status="Failure"
+	fi 	
 	
-	
-
-    	if [[ "$search_status" -eq 0 ]]; then
-        	echo $result_search_fun
-
-    	fi
 	insert_log ${LOG_EVENT} ${log_status}		
 	return $ret_status
 	
