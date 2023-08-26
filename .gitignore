@@ -1,0 +1,4 @@
+# ignore log file
+*_log
+# ignore database file
+*.csv
