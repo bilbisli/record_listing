@@ -1,5 +1,5 @@
 #! /bin/bash
-
+source $(dirname "${BASH_SOURCE[0]}")/../logging/insert_log.sh
 source $(dirname "${BASH_SOURCE[0]}")/search_record.sh
 source $(dirname "${BASH_SOURCE[0]}")/update_count.sh
 
@@ -10,7 +10,7 @@ source $(dirname "${BASH_SOURCE[0]}")/update_count.sh
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
 	return 0
 }
 
@@ -21,15 +21,17 @@ function get_record_file()
 
 function delete_record()
 {
-	
+	local arg_count=$#	
 	local record_amount=$1
 	shift
 	local record_name="$@"
 	local ret_status=0
 	local RECORD_FILE=$(get_record_file)
 	local search_function_result=0
+	local LOG_EVENT="Delete"
+	local log_status="Success"
 	
-	if [[ "$#" -ne 2 ]]; then
+	if [[ $arg_count -ne 2 ]]; then
 		
 		read -p "Inset record name: " record_name
 		while [[ "$record_amount" == "" ]]; do
@@ -54,19 +56,24 @@ function delete_record()
     			# Extract the number of record using cat after grep and puting it to a veriable
     			local number=$(echo "$line_after_grep" | cut -d',' -f2)
 			local sum_of_record=$(( number-record_amount ))
+			echo $sum_of_record
 			if [[ $sum_of_record -eq 0 ]];then
 				sed -i "/$line_after_grep/d" $RECORD_FILE
 				echo "The $record_name was deleted from the database"
 			else			
-				update_record_count "$string_of_option" "$sum_of_record"
+				update_record_count "$sum_of_record" "$string_of_option"
+				if [[ $? -ne 0 ]];then
+					log_status="Failure"
+				fi 
 			fi
 		else
-    			echo "couldn't delete the record"
+    			echo "couldn't delete the record" >> /dev/stderr
+    			log_status="Failure"
 		fi
 	fi
 
 
-
+	insert_log ${LOG_EVENT} ${log_status}
 	return $ret_status
 	
 }
