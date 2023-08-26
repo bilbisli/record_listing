@@ -124,8 +124,6 @@ function search_record_get_single()
 		ret_status=2
 	fi
 	
-	# TODO: Add logging
-	
 	return $ret_status
 }
 
