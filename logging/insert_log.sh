@@ -3,7 +3,7 @@
 
 function get_log_file()
 {
-	echo "listing_log"
+	echo "$(dirname "${BASH_SOURCE[0]}")/listing_log"
 	return 0
 }
 

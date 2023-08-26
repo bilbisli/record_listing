@@ -1,11 +1,15 @@
 #! /bin/bash
 
-source ../logging/insert_log.sh
+source $(dirname "${BASH_SOURCE[0]}")/../logging/insert_log.sh
 
 
+# get_log_file()
+# This function returns the log file relative path
+# value output: value output (return) is done by the echo method
+# usage: local log_file_path=$(get_log_file)
 function get_log_file()
 {
-	echo "../logging/listing_log"
+	echo "$(dirname "${BASH_SOURCE[0]}")/../logging/listing_log"
 	return 0
 }
 
@@ -15,7 +19,7 @@ function get_log_file()
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "../db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
 	return 0
 }
 
@@ -31,6 +35,10 @@ function search_record()
 	local result=0
 	local ret_status=0
 	local search_phrase="${@}"
+	
+	if [[ "$#" -eq 0 ]]; then
+		read -p "Enter search phrase: " search_phrase
+	fi
 	
 	result="`grep "${search_phrase[@]}" "${RECORD_FILE}" | sort -k 1`"
 	
@@ -131,10 +139,6 @@ function main()
 		shift
 	fi
 	local search_phrase="${@}"
-	
-	if [[ "${#@}" -eq 0 ]]; then
-		read -p "Enter a search phrase: " search_phrase
-	fi
 	
 	### workaround to handle the pitfall of local declaration changing the return status ($?) - 'search_record_func_result' must be globaly unique
 	search_record_func_result=$(search_record "${search_phrase}")
