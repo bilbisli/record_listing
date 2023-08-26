@@ -6,6 +6,7 @@ source $(dirname "${BASH_SOURCE[0]}")/search_record.sh
 function get_record_file()
 {
 	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
+
 	return 0
 }
 
