@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# imports
+for import in $(dirname "${BASH_SOURCE[0]}")/*/*.sh; do
+	source $import
+done
+
+
+# get_log_file()
+# This function returns the log file relative path
+# value output: value output (return) is done by the echo method
+# usage: local log_file_path=$(get_log_file)
+function get_log_file()
+{
+	echo "./logging/listing_log"
+	return 0
+}
+
+# get_record_file()
+# This function returns the database file relative path
+# value output: value output (return) is done by the echo method
+# usage: local listing_path=$(get_record_file)
+function get_record_file()
+{
+	echo "./db/listing.csv"
+	return 0
+}
 
 function menu()
 {
@@ -10,15 +35,15 @@ function menu()
 	local function_parameters=()
 	
 	# options displayed to user
-	local options=("option_1" "option_2")
+	local options=("Insert record" "Delete record" "Search records" "Update record name" "Update record amount")
 	local options+=("$exit_option")
 	# parallel operations (functions) to each option displayed to user
-	local operations=("function_1" "function_2")
-	local operations+=('exit')
+	# TODO: add the remaining functions
+	local operations=("insert_record" "delete_record" "search_record" "update_name" "update_count")
+	local operations+=('exit 0')
 	# parallel result message (if different messages are needed)
-	local operation_result=("option 1 result is: " "our result for option 2: ")
+	# local operation_result=("insert_record" "delete_record" "search_record" "update_name" "update_count")
 	
-	# TODO: get initial input / sent parameters
 	local sent_parameters=${@}
 	
 	while [[ "$keep_running_flag" == true ]]; do

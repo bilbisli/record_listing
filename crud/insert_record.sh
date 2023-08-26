@@ -1,6 +1,8 @@
 #! /bin/bash
-source ./search_record.sh
-source ./update_count.sh
+
+source $(dirname "${BASH_SOURCE[0]}")/search_record.sh
+source $(dirname "${BASH_SOURCE[0]}")/update_count.sh
+
 
 # get_record_file()
 # This function returns the database file relative path
@@ -8,7 +10,7 @@ source ./update_count.sh
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "../db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
 	return 0
 }
 
