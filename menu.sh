@@ -12,7 +12,8 @@ done
 # usage: local log_file_path=$(get_log_file)
 function get_log_file()
 {
-	echo "./logging/listing_log"
+	
+	echo "$(dirname "${BASH_SOURCE[0]}")/logging/listing_log"
 	return 0
 }
 
@@ -22,10 +23,14 @@ function get_log_file()
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "./db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
 	return 0
 }
 
+# menu()
+# This function displays the menu for the record listing management and lets the user choose an operation to be executed
+# value output: none
+# usage: menu()
 function menu()
 {
 	local keep_running_flag=true
@@ -44,8 +49,6 @@ function menu()
 	# parallel result message (if different messages are needed)
 	# local operation_result=("insert_record" "delete_record" "search_record" "update_name" "update_count")
 	
-	local sent_parameters=${@}
-	
 	while [[ "$keep_running_flag" == true ]]; do
 		# menu presentation
 		echo "Choose an item:"
@@ -63,7 +66,7 @@ function menu()
 				ret_status=0						# successful return status (0)
 			else								# operations
 				# operands validation
-				${operations[choice - 1]} ${function_parameters[@]}
+				${operations[choice - 1]}
 			fi
 		else
 			echo "Error - no such option."  >> /dev/stderr
@@ -77,7 +80,7 @@ function menu()
 
 function main()
 {
-	menu "${@}"
+	menu ${@}
 	local ret_status="$?"
 
 	exit "$ret_status"
