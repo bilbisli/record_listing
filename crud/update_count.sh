@@ -12,6 +12,7 @@ source $(dirname "${BASH_SOURCE[0]}")/../logging/insert_log.sh
 function get_record_file()
 {
 	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
+
 	return 0
 }
 

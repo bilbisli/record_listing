@@ -18,13 +18,21 @@ function get_log_file()
 }
 
 # get_record_file()
-# This function returns the database file relative path
+# This function returns the database file located in relative path, if it does not exists - function will create it
 # value output: value output (return) is done by the echo method
+# return status: 0 if record listing databse file existed before function call, 1 otherwise
 # usage: local listing_path=$(get_record_file)
 function get_record_file()
 {
-	echo "$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
-	return 0
+	local ret_status=0
+	local db_file_path="$(dirname "${BASH_SOURCE[0]}")/db/listing.csv"
+	
+	if [ ! -f "${db_file_path}" ]; then
+		touch "${db_file_path}"
+		ret_status=1
+	fi
+	
+	return $ret_status
 }
 
 # menu()
