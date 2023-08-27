@@ -1,12 +1,13 @@
 #!/bin/bash
 
+source $(dirname "${BASH_SOURCE[0]}")/../logging/insert_log.sh
+
 
 #display listing
-
 function get_record_file()
 {
 	
-	echo "../db/listing.csv"
+	echo "$(dirname "${BASH_SOURCE[0]}")/../db/listing.csv"
 	return 0
 	
 }
@@ -15,7 +16,7 @@ function get_record_file()
 function series_sum()
 {
 	local num_arr=("$@")
-	local ret_status=0	
+	local ret_status=0
 	
 	for number in "${num_arr[@]}"; do
    	 	sum=$((sum + number))
@@ -27,15 +28,20 @@ function series_sum()
 }
 function scan_listing_display_summary_of_listing()
 {
-
+	local LOG_EVENT="PrintAmount"
+ 	local record_sum=0
 	local database_directory=$(get_record_file)
 	local records_amount=(`cut -d "," -f2  $database_directory`)	
 
-	
-	series_sum "${records_amount[@]}"
+	record_sum=$(series_sum "${records_amount[@]}")
+	ret_status=$?
+
+ 	echo "The sum of records is: ${record_sum}"
+
+	insert_log ${LOG_EVENT} ${LOG_EVENT} ${record_sum}
+
+ 	return $ret_status
 }
-
-
 
 
 function main()
