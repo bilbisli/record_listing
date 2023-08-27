@@ -26,7 +26,7 @@ function series_sum()
 	
 	return $ret_status
 }
-function scan_listing_display_summary_of_listing()
+function display_record_count()
 {
 	local LOG_EVENT="PrintAmount"
  	local record_sum=0
