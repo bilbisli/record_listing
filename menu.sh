@@ -32,6 +32,8 @@ function get_record_file()
 		ret_status=1
 	fi
 	
+	echo $db_file_path
+	
 	return $ret_status
 }
 
@@ -48,12 +50,12 @@ function menu()
 	local function_parameters=()
 	
 	# options displayed to user
-	local options=("Insert record" "Delete record" "Search records" "Update record name" "Update record amount")
+	local options=("Insert record" "Delete record" "Search records" "Update record name" "Update record amount" "Print record amount")
 	local options+=("$exit_option")
 	# parallel operations (functions) to each option displayed to user
 	# TODO: add the remaining functions
-	local operations=("insert_record" "delete_record" "search_record" "update_name" "update_count")
-	local operations+=('exit 0')
+	local operations=("insert_record" "delete_record" "search_record" "update_name" "update_count" "display_record_count")
+	local operations+=("exit 0")
 	# parallel result message (if different messages are needed)
 	# local operation_result=("insert_record" "delete_record" "search_record" "update_name" "update_count")
 	

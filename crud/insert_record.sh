@@ -49,7 +49,7 @@ function insert_record()
 	search_status="$?"
 	
 	if [[ $search_status -eq 2 ]];then
-		echo "$record_name,$record_amount" >> $RECORD_FILE
+		echo "$record_name,$record_amount" >> /dev/stderr
 		echo "Added the record '$search_function_result' successfully"
 	else [[ search_status -eq 0 ]]
 		local string_of_option=$(echo $search_function_result)
@@ -67,15 +67,14 @@ function insert_record()
     			ret_status=1
 		fi
 	fi
+
 	if [[ ret_status -ne 0 ]];then
 		log_status="Failure"
 	fi 	
 	
 	insert_log ${LOG_EVENT} ${log_status}		
-	return $ret_status
-	
-	
 
+	return $ret_status
 }
 
 
