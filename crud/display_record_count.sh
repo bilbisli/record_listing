@@ -31,7 +31,7 @@ function display_record_count()
 	local LOG_EVENT="PrintAmount"
  	local record_sum=0
 	local database_directory=$(get_record_file)
-	local records_amount=(`cut -d "," -f2  $database_directory`)	
+	local records_amount=$(`cut -d "," -f2  $database_directory`)	
 
 	record_sum=$(series_sum "${records_amount[@]}")
 	ret_status=$?
